@@ -1,0 +1,29 @@
+name: gravel-bot
+
+on:
+  schedule:
+    - cron: "0 6 * * *"   # cada dia a les 06:00 UTC (08:00 a l'estiu, 07:00 a l'hivern a Barcelona)
+  workflow_dispatch:       # també es pot llançar a mà des de la pestanya Actions
+
+permissions:
+  contents: write          # per desar state.json (preus ja vistos)
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - run: python bike_bot.py
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+      - name: Desa l'estat
+        run: |
+          git config user.name "gravel-bot"
+          git config user.email "gravel-bot@users.noreply.github.com"
+          git add state.json || true
+          git diff --cached --quiet || (git commit -m "Actualitza estat" && git push)
