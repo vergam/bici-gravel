@@ -7,22 +7,35 @@ filters:
   size: "L"              # 1,88 m -> L (Megamo: 180-190 cm). Posa "" per desactivar
 
   # El nom o la URL ha de contenir ALMENYS una d'aquestes paraules
-  # (grups GRX/Apex = mínim gravel decent, o models que ja conec i compleixen)
+  # (grup GRX/Apex o models de gravel que ja conec i compleixen)
   include_any:
     - grx
     - apex
     - xplr
+    - ekar
     - jakar
     - silex
     - grizl
+    - grail
     - revolt
     - topstone
     - nuroad
     - kalima
     - nirone allroad
+    - impulso
     - arcadex
     - jaroon
     - adlar
+    - terra
+    - diverge
+    - crux
+    - backroad
+    - crosshill
+    - gravelx
+    - aspero
+    - silk
+    - megamo west
+    - dark matter
 
   # Si hi surt alguna d'aquestes paraules, es descarta
   exclude:
@@ -50,9 +63,12 @@ filters:
     - jakar base
     - grizl 5
     - x-strada
+    - segunda mano repuesto
+    - rueda
+    - ruedas
 
 # Bonus per ordenar les ofertes (més punts = surt més amunt).
-# A sobre es suma el % de descompte i es resta preu/100.
+# A sobre es suma el 50% del descompte i es resta preu/100.
 bonus:
   carbon: 15
   carbono: 15
@@ -65,72 +81,156 @@ bonus:
 respect_robots: true      # el bot no llegeix pàgines que el robots.txt de la web prohibeix
 
 telegram:
-  max_items: 8           # ofertes per missatge
+  max_items: 8            # ofertes per missatge
   only_changes: false     # true = només avisa si hi ha novetats o baixades de preu
   notify_when_empty: true # envia missatge curt encara que no hi hagi res
   price_drop_pct: 5       # marca com a baixada si el preu cau almenys aquest %
 
 # ---------------------------------------------------------------
-# Botigues / llistats a revisar (pàgines de categoria)
-# Si una botiga carrega amb JavaScript pot sortir "0 productes":
-# el bot t'ho avisa al missatge amb un ⚠️.
+# Botigues, outlets i segona mà.
+#
+#  pages / page_url : paginació ({n} = 2,3,4... o {from}/{size})
+#  render           : auto (per defecte: HTTP i, si falla o surt buit, navegador),
+#                     true (sempre navegador, per a pàgines que carreguen amb JS),
+#                     false (mai navegador)
+#  load_more        : text del botó "Veure més" que cal prémer (només amb navegador)
+#  optional: true   : font que no he pogut verificar des d'aquí. S'intenta cada dia,
+#                     però si falla NO surt al missatge diari (només a /diagnosi).
+#
+# Les fonts sense "optional" són les que sí que he vist funcionar.
 # ---------------------------------------------------------------
 sources:
-  - name: Bike24
-    url: https://www.bike24.es/ciclismo/bicicletas/bicicletas-carretera/bicicletas-gravel/f.ofertas.descuentos
-  - name: Bikestocks
-    url: https://www.bikestocks.es/bicicletas-gravel-2016
-  - name: Fabregues
-    url: https://fabreguesbicicletas.com/es/bicicletas/bicicletas/gravel-cx
+  # ----- Botigues amb molt de gravel i bons descomptes (verificades)
   - name: Biciescapa
-    url: https://www.biciescapa.com/es/bicicletas/gravel-cx
-  - name: Canyon Outlet
-    url: https://www.canyon.com/es-es/outlet-bicicletas/gravel/
-  - name: La Fuga
-    url: https://www.lafugacycling.com/2512-bicicletas-gravel
-  - name: Buhobike Merida
-    url: https://www.buhobike.com/9304-merida-silex
-
-  # Decathlon (inclou el marketplace: Bicimarket, Fast Lap "Segunda vida"...).
-  # Paginació verificada: ?from=40&size=40, uns 200 articles (5 pàgines).
-  - name: Decathlon
+    url: https://www.biciescapa.com/es/bicicletas/gravel-cx/
+    pages: 8
+    page_url: "https://www.biciescapa.com/es/bicicletas/gravel-cx/?page={n}"
+  - name: Bike24 ofertes
+    url: https://www.bike24.es/ciclismo/bicicletas/bicicletas-carretera/bicicletas-gravel/f.ofertas.descuentos
+  - name: Alltricks gravel
+    url: https://www.alltricks.es/C-1375894-bicicletas-de-gravel
+    pages: 8
+    page_url: "https://www.alltricks.es/C-1375894-bicicletas-de-gravel/I-Page{n}_24"
+  - name: Decathlon (inclou Bicimarket i Fast Lap)
     url: https://www.decathlon.es/es/deportes/ciclismo/bicicletas-gravel
     pages: 5
     page_size: 40
     page_url: "https://www.decathlon.es/es/deportes/ciclismo/bicicletas-gravel?from={from}&size={size}"
+  - name: Fabregues
+    url: https://fabreguesbicicletas.com/es/bicicletas/bicicletas/gravel-cx
+  - name: Bikestocks
+    url: https://www.bikestocks.es/bicicletas-gravel-2016
+  - name: Rose Bikes (sale)
+    url: https://www.rosebikes.com/sale/bikes/gravel?sf=1
 
-  # --- Fonts que NO he pogut llegir des d'aquí (bloquegen robots o l'URL no l'he pogut verificar).
-  # Obre la botiga al navegador, entra a la categoria de gravel, copia l'URL,
-  # posa-la a "url" i canvia enabled a true. Si a la primera execució surt
-  # "0 productes" amb un ⚠️, és que carrega amb JavaScript o et bloqueja.
+  # ----- Outlets i liquidacions (verificades)
+  - name: Canyon Outlet
+    url: https://www.canyon.com/es-es/outlet-bicicletas/gravel/
+    render: true
+    load_more: "Ver más productos"
+  - name: Subeybaja outlet gravel
+    url: https://subeybajabikes.com/es/3420-outlet-bicicletas-de-gravel
+  - name: Bicispina outlet gravel
+    url: https://www.bicispina.com/outlet-bicicletas-gravel
+  - name: Alltricks reacondicionades
+    url: https://www.alltricks.es/C-2183910-bicicletas-de-gravel-reacondicionadas
+
+  # ----- Segona mà i reacondicionades (verificades)
+  - name: Buycycle (segona mà)
+    url: https://buycycle.com/es-es/shop/categories/gravel
+    pages: 5
+    page_url: "https://buycycle.com/es-es/shop/main-types/bikes/types/road-gravel/categories/gravel/page/{n}"
+  - name: Fernando Torres 2a mà gravel
+    url: https://www.fernandotorresprobikes.com/3186-bicicletas-segunda-mano-gravel
+    optional: true
+  - name: VB Sports 2a mà gravel
+    url: https://vbsports.bike/2230-2%C2%AA-mano---gravel
+    optional: true
+
+  # ----- Per provar (bloquegen robots des d'on les he mirat, o no he pogut veure'n el HTML)
   - name: Bike Ocasion
-    url: ""                # <- enganxa aquí l'URL de gravel de bike-ocasion.com
-    enabled: false
+    url: https://bike-ocasion.com/gravel-579
+    pages: 6
+    page_url: "https://bike-ocasion.com/gravel-579?page={n}"
+    optional: true
   - name: Bicimarket
-    url: ""                # <- enganxa aquí l'URL de gravel de bicimarket.com
-    enabled: false
-  - name: Orbea Outlet
-    url: ""                # <- la pàgina d'outlet d'Orbea, filtrada per Terra/gravel
-    enabled: false
-  - name: Specialized Outlet
-    url: ""                # <- Diverge / Crux a l'outlet de Specialized
-    enabled: false
+    url: https://www.bicimarket.com/es/584-gravel
+    optional: true
+  - name: Specialized ofertes
+    url: https://www.specialized.com/es/es/shop/ofertas
+    optional: true
+  - name: Tradeinn / Bikeinn
+    url: https://www.tradeinn.com/bikeinn/en/bikes-and-frames-gravel-bikes/16082/s
+    optional: true
+  - name: Chollometro bicicletes
+    url: https://www.chollometro.com/categorias/bicicletas
+    optional: true
+  - name: Tuvalum outlet gravel
+    url: https://tuvalum.com/collections/outlet-bicicletas-gravel
+    optional: true
+  - name: Terra-bike liquidació (Orbea...)
+    url: https://terra-bike.com/es/liquidacion-bicicletas
+    optional: true
+  - name: Terra-bike Orbea Terra
+    url: https://terra-bike.com/es/orbea-terra
+    optional: true
+  - name: Oiartzunbike ofertes
+    url: https://www.oiartzunbike.com/764-bicicletas-en-oferta-oiartzun-bike
+    pages: 6
+    page_url: "https://www.oiartzunbike.com/764-bicicletas-en-oferta-oiartzun-bike?page={n}"
+    optional: true
+  - name: Cicloscurra outlet gravel
+    url: https://cicloscurra.com/266-bicicletas-de-gravel-outlet
+    optional: true
+  - name: Buhobike Merida
+    url: https://www.buhobike.com/9304-merida-silex
+    optional: true
+  - name: Buhobike Megamo
+    url: https://www.buhobike.com/9284-bicicletas-megamo-gravel
+    optional: true
+  - name: Buhobike Orbea
+    url: https://www.buhobike.com/9270-bicicleta-orbea-gravel
+    optional: true
+  - name: La Fuga
+    url: https://www.lafugacycling.com/2512-bicicletas-gravel
+    optional: true
+  - name: GR-100 Megamo
+    url: https://gr-100.com/categoria/bicicletas/bicicletas-gravel/bicicletas-gravel-megamo/
+    optional: true
+  - name: Bike-room Megamo
+    url: https://bike-room.com/collections/megamo-gravel-bikes
+    optional: true
+  - name: Bike-Discount
+    url: https://www.bike-discount.de/en/gravel_bikes
+    optional: true
+  - name: Sanferbike gravel
+    url: https://www.sanferbike.com/es/gravel-y-ciclocross/bicicletas-gravel/
+    optional: true
+  - name: Pedalmoto gravel
+    url: https://pedalmoto.com/es/bicicletas-gravel/
+    optional: true
+  - name: Emebikes gravel
+    url: https://emebikes.com/bicicletas/bicicletas-gravel/
+    optional: true
 
-  # Chollometro: el seu robots.txt no permet llegir les pàgines de cerca,
-  # així que el bot NO les llegeix. Si trobes un feed RSS públic d'una
-  # categoria o d'una etiqueta (botó RSS de la pàgina), el pots posar així:
-  - name: Chollometro (RSS)
+  # ----- Per omplir tu (no he trobat la URL): enganxa-la i posa enabled: true
+  - name: Orbea (outlet oficial)
+    url: ""
+    enabled: false
+  - name: Feed RSS d'ofertes
     type: rss
-    url: ""                # <- URL del feed RSS
+    url: ""
     enabled: false
 
 # ---------------------------------------------------------------
-# Fitxes de producte concretes que vols vigilar (només JSON-LD)
+# Fitxes de producte concretes que vols vigilar (només dades estructurades)
 # ---------------------------------------------------------------
 watch:
   - name: Jakar 30 (Biciescapa)
     url: https://www.biciescapa.com/es/bicicletas/gravel-cx/bicicleta-megamo-jakar-30-26-89516
   - name: Jakar 30 (Fabregues)
     url: https://fabreguesbicicletas.com/es/gravel-cx/bicicleta-megamo-jakar-30-2026
+    optional: true
   - name: Jakar 30 (GR-100)
     url: https://gr-100.com/producto/megamo-jakar-30-2026/
+    optional: true
