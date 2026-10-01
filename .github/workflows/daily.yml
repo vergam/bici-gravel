@@ -3,7 +3,19 @@ name: gravel-bot
 on:
   schedule:
     - cron: "0 6 * * *"   # cada dia a les 06:00 UTC (08:00 a l'estiu, 07:00 a l'hivern a Barcelona)
-  workflow_dispatch:       # també es pot llançar a mà des de la pestanya Actions
+  workflow_dispatch:       # llançament manual (pestanya Actions) i des de Telegram (/ofertes, /diagnosi)
+    inputs:
+      mode:
+        description: "offers = busca ofertes · diagnose = estat de les botigues"
+        type: choice
+        options:
+          - offers
+          - diagnose
+        default: offers
+      max_price:
+        description: "Preu màxim en € (buit = el de config.yaml)"
+        required: false
+        default: ""
 
 permissions:
   contents: write          # per desar state.json (preus ja vistos)
@@ -11,16 +23,28 @@ permissions:
 jobs:
   run:
     runs-on: ubuntu-latest
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+          cache: pip
       - run: pip install -r requirements.txt
-      - run: python bike_bot.py
+      - run: python -m playwright install --with-deps chromium   # navegador per a pàgines amb JavaScript
+      - name: Executa el bot
         env:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          MAX_PRICE: ${{ github.event.inputs.max_price }}
+          ON_DEMAND: ${{ github.event_name == 'workflow_dispatch' }}
+          MODE: ${{ github.event.inputs.mode }}
+        run: |
+          if [ "$MODE" = "diagnose" ]; then
+            python bike_bot.py --diagnose --all
+          else
+            python bike_bot.py
+          fi
       - name: Desa l'estat
         run: |
           git config user.name "gravel-bot"
