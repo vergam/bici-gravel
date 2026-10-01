@@ -1,0 +1,136 @@
+# ---------------------------------------------------------------
+# Requisits de la bici (edita-ho a gust)
+# ---------------------------------------------------------------
+filters:
+  max_price: 1500        # preu màxim en €
+  min_price: 600         # per descartar components i accessoris
+  size: "L"              # 1,88 m -> L (Megamo: 180-190 cm). Posa "" per desactivar
+
+  # El nom o la URL ha de contenir ALMENYS una d'aquestes paraules
+  # (grups GRX/Apex = mínim gravel decent, o models que ja conec i compleixen)
+  include_any:
+    - grx
+    - apex
+    - xplr
+    - jakar
+    - silex
+    - grizl
+    - revolt
+    - topstone
+    - nuroad
+    - kalima
+    - nirone allroad
+    - arcadex
+    - jaroon
+    - adlar
+
+  # Si hi surt alguna d'aquestes paraules, es descarta
+  exclude:
+    - claris
+    - sora
+    - tourney
+    - altus
+    - acera
+    - flat-bar
+    - flat bar
+    - junior
+    - kids
+    - infantil
+    - ebike
+    - e-bike
+    - electric
+    - eléctric
+    - hybrid
+    - urban
+    - frameset
+    - cuadro
+    - quadre
+    - marco
+    - jakar 20
+    - jakar base
+    - grizl 5
+    - x-strada
+
+# Bonus per ordenar les ofertes (més punts = surt més amunt).
+# A sobre es suma el % de descompte i es resta preu/100.
+bonus:
+  carbon: 15
+  carbono: 15
+  rx6: 6
+  rx8: 8
+  "1x12": 5
+  "2x12": 5
+  tubeless: 3
+
+respect_robots: true      # el bot no llegeix pàgines que el robots.txt de la web prohibeix
+
+telegram:
+  max_items: 8           # ofertes per missatge
+  only_changes: false     # true = només avisa si hi ha novetats o baixades de preu
+  notify_when_empty: true # envia missatge curt encara que no hi hagi res
+  price_drop_pct: 5       # marca com a baixada si el preu cau almenys aquest %
+
+# ---------------------------------------------------------------
+# Botigues / llistats a revisar (pàgines de categoria)
+# Si una botiga carrega amb JavaScript pot sortir "0 productes":
+# el bot t'ho avisa al missatge amb un ⚠️.
+# ---------------------------------------------------------------
+sources:
+  - name: Bike24
+    url: https://www.bike24.es/ciclismo/bicicletas/bicicletas-carretera/bicicletas-gravel/f.ofertas.descuentos
+  - name: Bikestocks
+    url: https://www.bikestocks.es/bicicletas-gravel-2016
+  - name: Fabregues
+    url: https://fabreguesbicicletas.com/es/bicicletas/bicicletas/gravel-cx
+  - name: Biciescapa
+    url: https://www.biciescapa.com/es/bicicletas/gravel-cx
+  - name: Canyon Outlet
+    url: https://www.canyon.com/es-es/outlet-bicicletas/gravel/
+  - name: La Fuga
+    url: https://www.lafugacycling.com/2512-bicicletas-gravel
+  - name: Buhobike Merida
+    url: https://www.buhobike.com/9304-merida-silex
+
+  # Decathlon (inclou el marketplace: Bicimarket, Fast Lap "Segunda vida"...).
+  # Paginació verificada: ?from=40&size=40, uns 200 articles (5 pàgines).
+  - name: Decathlon
+    url: https://www.decathlon.es/es/deportes/ciclismo/bicicletas-gravel
+    pages: 5
+    page_size: 40
+    page_url: "https://www.decathlon.es/es/deportes/ciclismo/bicicletas-gravel?from={from}&size={size}"
+
+  # --- Fonts que NO he pogut llegir des d'aquí (bloquegen robots o l'URL no l'he pogut verificar).
+  # Obre la botiga al navegador, entra a la categoria de gravel, copia l'URL,
+  # posa-la a "url" i canvia enabled a true. Si a la primera execució surt
+  # "0 productes" amb un ⚠️, és que carrega amb JavaScript o et bloqueja.
+  - name: Bike Ocasion
+    url: ""                # <- enganxa aquí l'URL de gravel de bike-ocasion.com
+    enabled: false
+  - name: Bicimarket
+    url: ""                # <- enganxa aquí l'URL de gravel de bicimarket.com
+    enabled: false
+  - name: Orbea Outlet
+    url: ""                # <- la pàgina d'outlet d'Orbea, filtrada per Terra/gravel
+    enabled: false
+  - name: Specialized Outlet
+    url: ""                # <- Diverge / Crux a l'outlet de Specialized
+    enabled: false
+
+  # Chollometro: el seu robots.txt no permet llegir les pàgines de cerca,
+  # així que el bot NO les llegeix. Si trobes un feed RSS públic d'una
+  # categoria o d'una etiqueta (botó RSS de la pàgina), el pots posar així:
+  - name: Chollometro (RSS)
+    type: rss
+    url: ""                # <- URL del feed RSS
+    enabled: false
+
+# ---------------------------------------------------------------
+# Fitxes de producte concretes que vols vigilar (només JSON-LD)
+# ---------------------------------------------------------------
+watch:
+  - name: Jakar 30 (Biciescapa)
+    url: https://www.biciescapa.com/es/bicicletas/gravel-cx/bicicleta-megamo-jakar-30-26-89516
+  - name: Jakar 30 (Fabregues)
+    url: https://fabreguesbicicletas.com/es/gravel-cx/bicicleta-megamo-jakar-30-2026
+  - name: Jakar 30 (GR-100)
+    url: https://gr-100.com/producto/megamo-jakar-30-2026/
